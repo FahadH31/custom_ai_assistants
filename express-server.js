@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const multer = require('multer');
 const axios = require('axios');
-const cheerio = require('cheerio')
+const cheerio = require('cheerio');
 
 const app = express();
 dotenv.config();
@@ -99,7 +99,7 @@ async function createVectorStore(assistant, fileId) {
 
 //-- Routes --//
 app.get('/ping', (req, res) => {
-  res.status(200).send('OK');
+    res.status(200).send('OK');
 });
 
 // Handle create-chatbot form submission
@@ -209,12 +209,12 @@ app.post('/validate-assistant', (req, res) => {
 
     // Check if the assistant ID exists in memory
     if (assistants.has(revisitAssistantID)) {
-        
+
         const assistantData = assistants.get(revisitAssistantID);
         app.locals.assistant = assistantData.assistant; // Set assistant
         app.locals.thread = assistantData.thread;
         const companyName = assistantData.companyName; // Retrieve the stored companyName
-        
+
         // Redirect to the chat page, passing the assistant ID and companyName in the query string
         res.redirect(`/Pages/chat.html?assistantID=${encodeURIComponent(revisitAssistantID)}&companyName=${encodeURIComponent(companyName)}`);
     } else {
@@ -254,11 +254,11 @@ app.post('/getResponse', async (req, res) => {
         const latestAssistantMessage = messages.data.find(message => message.role === 'assistant');
         if (latestAssistantMessage && latestAssistantMessage.content.length > 0) {
             const latestMessageText = latestAssistantMessage.content[0].text.value;
-            
+
             // Removing annotations.
             const pattern = /【\d:\d†source】/g;
             const pattern2 = /【\d\d:\d†source】/g;
-            const cleanedText = latestMessageText.replace(pattern, '').replace(pattern2,'');
+            const cleanedText = latestMessageText.replace(pattern, '').replace(pattern2, '');
 
             res.json({ message: cleanedText });
         } else {

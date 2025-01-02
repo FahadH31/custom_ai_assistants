@@ -149,13 +149,7 @@ function appendMessage(message, sender) {
 function updateLoadingMessage(loadingContainer, message, sender) {
   const messageDiv = loadingContainer.querySelector('.message');
 
-  // For displaying code blocks 
-  const codeBlockPattern = /```(\w*)\s*([\s\S]*?)```/g;
-
-  const formattedMessage = message.replace(codeBlockPattern, (match, lang, code) => {
-    const highlightedCode = `<code class="language-${lang}">${escapeHtml(code)}</code>`;
-    return `<pre>${highlightedCode}</pre>`;
-  });
+  const formattedMessage = marked.parse(message); // Parse HTML for markdown
 
   messageDiv.innerHTML = formattedMessage // Update the message content
 
@@ -163,16 +157,6 @@ function updateLoadingMessage(loadingContainer, message, sender) {
     messageDiv.classList.remove('loading-message');
     messageDiv.classList.add('assistant-message');
   }
-}
-
-// Escape HTML when displaying code blocks
-function escapeHtml(input) {
-  const str = String(input);
-  return str.replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
 }
 
 // Expand Input Button
@@ -194,7 +178,6 @@ document.getElementById("modal-close-btn").addEventListener("click", function ()
 document.getElementById("modal-backdrop").addEventListener("click", function () {
   document.getElementById("modal-close-btn").click();
 });
-
 
 
 

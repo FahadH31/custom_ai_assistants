@@ -1,5 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
 
+/* To maintain padding between paragraphs, but avoid padding at the end of any message.*/
+p:last-child {
+  margin-bottom: 0;
+}
+
+a {
+  color: black;
+}
+
+a:hover{
+  color: #282c34;
+}
+
 .container {
   margin: 0;
   padding: 40px;
@@ -98,6 +111,8 @@
   margin-right: 100px;
   margin-bottom: 20px;
   margin-top: 20px;
+  padding-top: 5px;
+  padding-bottom: 15px;
   border: 1px solid #ccc;
 
   background-color: white;
@@ -357,6 +372,7 @@ pre {
 code {
   font-family: Consolas, "Courier New", monospace;
   font-size: 14px;
+  color: black;
 }
 
 /*Mobile Screens*/
