@@ -150,6 +150,10 @@
   cursor: pointer;
 }
 
+#expand-btn:disabled {
+  cursor: not-allowed;
+}
+
 #expand-btn-img {
   width: 19px;
   /* Adjust size */
@@ -173,6 +177,12 @@
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
+#send-btn:disabled{
+ background-color: grey;
+ cursor: not-allowed;
+ transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
 #modal-close-btn {
   padding: 10px;
   margin-left: 10px;
@@ -184,6 +194,12 @@
 #modal-close-btn:hover {
   background-color: #5a2dc1;
   align-self: bottom;
+  cursor: pointer;
+}
+
+#send-btn:disabled:hover{
+  background-color: grey;
+  cursor: not-allowed;
 }
 
 .message-container {

@@ -75,6 +75,10 @@ async function sendMessage() {
   const loadingId = appendMessage('...', 'loading');
 
   try {
+    document.getElementById('user-input').disabled = true;
+    document.getElementById('send-btn').disabled = true;
+    document.getElementById('expand-btn').disabled = true;
+
     const response = await fetch('/getResponse', {
       method: 'POST',
       headers: {
@@ -91,6 +95,10 @@ async function sendMessage() {
 
     // To replace loading bubble with the server response
     updateLoadingMessage(loadingId, responseData.message, 'server');
+
+    document.getElementById('user-input').disabled = false;
+    document.getElementById('send-btn').disabled = false;
+    document.getElementById('expand-btn').disabled = false;
   } catch (error) {
     console.error('Error sending message:', error);
     updateLoadingMessage(loadingId, 'Error occurred. Please try again.', 'server');
