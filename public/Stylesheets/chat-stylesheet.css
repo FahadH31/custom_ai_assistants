@@ -323,6 +323,26 @@
   transition: opacity 0.3s ease-in-out;
 }
 
+/* Code Block Styling */
+pre {
+  background-color: #282c34;
+  color: #abb2bf;
+  
+  margin: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  
+  outline: none;
+  border: none;
+  
+  overflow-x: auto;
+}
+
+code {
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 14px;
+}
+
 /*Mobile Screens*/
 @media only screen and (max-width: 1000px) {
 
@@ -384,6 +404,11 @@
   .assistant-message {
     max-width: 70vw;
     font-size: 12pt;
+  }
+
+  .loading-message {
+    max-width: 70vw;
+    min-width: 20vw;
   }
 }
 

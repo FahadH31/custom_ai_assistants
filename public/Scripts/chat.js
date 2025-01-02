@@ -71,7 +71,7 @@ async function sendMessage() {
   appendMessage(userInput, 'user'); // Display the user message
   document.getElementById('user-input').value = ''; // Clear Input Field
 
-  // Add a loading bubble while the response is loading 
+  // Visual loading bubble for while the assistant response is loading 
   const loadingId = appendMessage('...', 'loading');
 
   try {
@@ -89,7 +89,7 @@ async function sendMessage() {
 
     const responseData = await response.json();
 
-    // Replace loading bubble with the server response
+    // To replace loading bubble with the server response
     updateLoadingMessage(loadingId, responseData.message, 'server');
   } catch (error) {
     console.error('Error sending message:', error);
@@ -99,6 +99,7 @@ async function sendMessage() {
 
 // Responsible for displaying messages on the screen.
 function appendMessage(message, sender) {
+
   const chatContainer = document.getElementById('chat-container');
 
   const messageContainer = document.createElement('div');
@@ -118,7 +119,6 @@ function appendMessage(message, sender) {
     profileImg.src = '../Images/assistant-image.png';
     messageDiv.classList.add('assistant-message');
   } else if (sender === 'loading') {
-    // Add a class for the loading bubble
     profileImg.src = '../Images/assistant-image.png';
     messageDiv.classList.add('loading-message');
   }
@@ -140,12 +140,31 @@ function appendMessage(message, sender) {
 
 function updateLoadingMessage(loadingContainer, message, sender) {
   const messageDiv = loadingContainer.querySelector('.message');
-  messageDiv.textContent = message; // Update the text
+
+  // For displaying code blocks 
+  const codeBlockPattern = /```(\w*)\s*([\s\S]*?)```/g;
+
+  const formattedMessage = message.replace(codeBlockPattern, (match, lang, code) => {
+    const highlightedCode = `<code class="language-${lang}">${escapeHtml(code)}</code>`;
+    return `<pre>${highlightedCode}</pre>`;
+  });
+
+  messageDiv.innerHTML = formattedMessage // Update the message content
 
   if (sender === 'server') {
     messageDiv.classList.remove('loading-message');
     messageDiv.classList.add('assistant-message');
   }
+}
+
+// Escape HTML when displaying code blocks
+function escapeHtml(input) {
+  const str = String(input);
+  return str.replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 // Expand Input Button
@@ -160,8 +179,8 @@ document.getElementById("expand-btn").addEventListener("click", function () {
 document.getElementById("modal-close-btn").addEventListener("click", function () {
   const expandedInput = document.getElementById("textarea-input").value;
   document.getElementById("user-input").value = expandedInput;    // Sync textarea back to input
-  document.getElementById("textarea-modal").classList.remove('show');    
-  document.getElementById("modal-backdrop").classList.remove('show');    
+  document.getElementById("textarea-modal").classList.remove('show');
+  document.getElementById("modal-backdrop").classList.remove('show');
 });
 
 document.getElementById("modal-backdrop").addEventListener("click", function () {
