@@ -13,6 +13,31 @@ a:hover{
   color: #282c34;
 }
 
+#home-link{
+  padding: none;
+  margin: none;
+  width: fit-content;
+  height: fit-content;
+}
+
+#home-btn {
+  background-image: url('../Images/home.png');
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  min-width: 25px;
+  min-height: 20px;
+  
+  border: none;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin-top: 19px;
+  margin-left: 25px;
+}
+
 .container {
   margin: 0;
   padding: 40px;
@@ -495,7 +520,8 @@ html[data-theme="dark"] #textarea-input {
 }
 
 html[data-theme="dark"] #copy-icon,
-html[data-theme="dark"] #expand-btn-img {
+html[data-theme="dark"] #expand-btn-img,
+html[data-theme="dark"] #home-btn {
   filter: invert()
 }
 
