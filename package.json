@@ -15,6 +15,7 @@
     "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-session": "^1.18.1",
     "fs": "^0.0.1-security",
     "marked": "^15.0.5",
     "multer": "^1.4.5-lts.1",

@@ -8,6 +8,7 @@ const fs = require('fs');
 const multer = require('multer');
 const axios = require('axios');
 const cheerio = require('cheerio');
+const session = require('express-session');
 
 const app = express();
 dotenv.config();
@@ -39,9 +40,15 @@ app.use(bodyParser.json());
 // Middleware to parse incoming request bodies
 app.use(express.json());
 
-// In-memory store for assistant IDs
-const assistants = new Map(); // Key: assistant ID, Value: { assistant, threads: [] }
+// Session setup
+app.use(session({
+    secret: process.env.SECRET_VALUE,
+    resave: false,
+    saveUninitialized: true
+}));
 
+// In-memory store for assistant IDs
+const assistants = new Map();
 
 //-- Functions --//
 // Fetch HTML content from a URL using axios
@@ -98,15 +105,11 @@ async function createVectorStore(assistant, fileId) {
 }
 
 //-- Routes --//
-app.get('/ping', (req, res) => {
-    res.status(200).send('OK');
-});
-
-// Handle create-chatbot form submission
+// Handle create-assistant form submission
 app.post('/submit-form', upload.single('uploadFile'), async (req, res) => {
     // Importing form data
     const companyName = req.body.companyName;
-    const chatbotInstructions = req.body.chatbotInstructions;
+    const assistantInstructions = req.body.chatbotInstructions;
     const uploadedFile = req.file;
     let uploadedLinks = null;
 
@@ -117,8 +120,8 @@ app.post('/submit-form', upload.single('uploadFile'), async (req, res) => {
 
     // Create an Assistant
     const assistant = await openai.beta.assistants.create({
-        name: companyName + "'s Chatbot",
-        instructions: chatbotInstructions,
+        name: companyName + "'s Assistant",
+        instructions: assistantInstructions,
         tools: [{ type: "code_interpreter" }, { type: "file_search" }],
         model: "gpt-3.5-turbo"
     });
@@ -133,9 +136,9 @@ app.post('/submit-form', upload.single('uploadFile'), async (req, res) => {
         companyName, // Store the companyName with the assistant
     });
 
-    // Make Assistant and Thread accessible throughout the code (for other routes)
-    app.locals.assistant = assistant;
-    app.locals.thread = thread;
+    // Store assistant and thread in the session
+    req.session.assistant = assistant;
+    req.session.thread = thread;
 
     // Uploaded Link Functionality
     if (uploadedLinks) {
@@ -171,7 +174,7 @@ app.post('/submit-form', upload.single('uploadFile'), async (req, res) => {
                 purpose: "assistants"
             });
 
-            createVectorStore(app.locals.assistant, file.id);
+            createVectorStore(assistant, file.id);
 
         } catch (error) {
             console.error('Error processing URLs:', error);
@@ -184,23 +187,31 @@ app.post('/submit-form', upload.single('uploadFile'), async (req, res) => {
             file: fs.createReadStream(uploadedFile.path),
             purpose: "assistants"
         });
-        createVectorStore(app.locals.assistant, file.id);
+        createVectorStore(assistant, file.id);
     }
 
-    // Append company name to the URL for chatbot, so it can be used to the title (and redirect)
+    // Append company name to the URL for assistant, so it can be used to the title (and redirect)
     res.redirect(`/Pages/chat.html?companyName=${encodeURIComponent(companyName)}`);
 });
 
-// Server-side error handling if accessing chatbot w/o creating an assistant first.
-app.get('/api/checkAssistant', (req, res) => {
-    // Logic to check if an assistant exists
-    const assistantExists = !!app.locals.assistant;
+// Server-side error handling if accessing chat w/o creating an assistant first.
+app.get('/check-assistant', (req, res) => {
+    const assistant = req.session.assistant;
+
+    // Ensure assistant is in session
+    if (!assistant) {
+        return res.status(404).json({ error: 'No assistant found in session' });
+    }
+
+    // Logic to check if assistant exists
+    const assistantExists = !!assistant;
     res.json({ assistantExists });
 });
 
 // To Get and Display Assistant ID
-app.get('/api/assistant-id', (req, res) => {
-    res.json({ assistantId: app.locals.assistant.id });
+app.get('/assistant-id', (req, res) => {
+    const assistant = req.session.assistant;
+    res.json({ assistantId: assistant.id });
 });
 
 // Validate existence of entered Assistant 
@@ -209,10 +220,11 @@ app.post('/validate-assistant', (req, res) => {
 
     // Check if the assistant ID exists in memory
     if (assistants.has(revisitAssistantID)) {
-
         const assistantData = assistants.get(revisitAssistantID);
-        app.locals.assistant = assistantData.assistant; // Set assistant
-        app.locals.thread = assistantData.thread;
+
+        req.session.assistant = assistantData.assistant; // Set assistant in session
+        req.session.thread = assistantData.thread;
+
         const companyName = assistantData.companyName; // Retrieve the stored companyName
 
         // Redirect to the chat page, passing the assistant ID and companyName in the query string
@@ -224,7 +236,9 @@ app.post('/validate-assistant', (req, res) => {
 });
 
 // Handle Conversation 
-app.post('/getResponse', async (req, res) => {
+app.post('/get-response', async (req, res) => {
+    const assistant = req.session.assistant;
+    const thread = req.session.thread;
 
     const userInput = req.body.userInput;
     if (!userInput) {
@@ -233,7 +247,7 @@ app.post('/getResponse', async (req, res) => {
 
     // Add user message to thread.
     const message = await openai.beta.threads.messages.create(
-        app.locals.thread.id,
+        thread.id,
         {
             role: "user",
             content: userInput
@@ -242,9 +256,9 @@ app.post('/getResponse', async (req, res) => {
 
     // Run message to generate response
     let run = await openai.beta.threads.runs.createAndPoll(
-        app.locals.thread.id,
+        thread.id,
         {
-            assistant_id: app.locals.assistant.id
+            assistant_id: assistant.id
         }
     );
 
@@ -270,12 +284,6 @@ app.post('/getResponse', async (req, res) => {
 
 });
 
-// Route to handle clearing server variables
-app.post('/clearData', (req, res) => {
-    app.locals.assistant = null;
-    app.locals.thread = null;
-    res.sendStatus(200); // Send a success response
-});
 
 const PORT = process.env.PORT || 3000; // Use PORT environment variable or default to 3000
 app.listen(PORT, () => {

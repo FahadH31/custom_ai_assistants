@@ -1,7 +1,7 @@
 // Client-side error handling if on chatbot.html w/o having a created assistant active.
 if (window.location.href.includes("chat.html")) {
   // Fetch the information from the server
-  fetch('/api/checkAssistant')
+  fetch('/check-assistant')
     .then(response => response.json())
     .then(data => {
       if (!data.assistantExists) {
@@ -25,7 +25,7 @@ if (companyName) {
 
 // Display Assistant ID
 document.addEventListener('DOMContentLoaded', () => {
-  fetch('/api/assistant-id')
+  fetch('/assistant-id')
     .then(response => response.json())
     .then(data => {
       const assistantIdElement = document.getElementById('assistant-id');
@@ -49,14 +49,6 @@ function copyToClipboard() {
   });
 }
 
-// For Clearing Server Variables
-window.addEventListener('beforeunload', function (event) {
-  event.preventDefault();
-  // Send a signal to the server when the page is unloaded
-  fetch('/clearData', { method: 'POST' });
-  return (event.returnValue = "");
-});
-
 // Allow for message to be submitted with enter key.
 document.getElementById('user-input').addEventListener('keypress', function (event) {
   if (event.key === 'Enter') {
@@ -79,7 +71,7 @@ async function sendMessage() {
     document.getElementById('send-btn').disabled = true;
     document.getElementById('expand-btn').disabled = true;
 
-    const response = await fetch('/getResponse', {
+    const response = await fetch('/get-response', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
