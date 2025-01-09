@@ -149,6 +149,7 @@ a:hover {
 
     body {
         width: 100vw;
+        padding-top: 20px;
     }
 
     .container {
@@ -158,6 +159,46 @@ a:hover {
         padding: 15px;
 
         max-height: 85vh;
+    }
+
+    h3 {
+        font-size: 20pt;
+        text-align: center;
+    }
+
+    label {
+        font-size: 12pt;
+    }
+
+    .form-group {
+        margin-bottom: 30px;
+    }
+
+    input[type="text"],
+    textarea {
+        font-size: 12pt;
+        padding: 8px;
+    }
+
+    button,
+    input[type="file"]::-webkit-file-upload-button,
+    .customUploadButton {
+        padding: 8px 16px;
+    }
+}
+
+/* Support for shorter viewports (ex. Laptop display)*/
+@media (max-height: 768px) and (min-width: 1024px) {
+    body {
+        padding: 20px;
+    }
+    
+    .container {
+        width: 65%;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 15px;
+
     }
 
     h3 {

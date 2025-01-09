@@ -9,11 +9,11 @@ a {
   color: black;
 }
 
-a:hover{
+a:hover {
   color: #282c34;
 }
 
-#home-link{
+#home-link {
   padding: none;
   margin: none;
   width: fit-content;
@@ -28,7 +28,7 @@ a:hover{
 
   min-width: 25px;
   min-height: 20px;
-  
+
   border: none;
 
   position: fixed;
@@ -217,10 +217,10 @@ a:hover{
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-#send-btn:disabled{
- background-color: grey;
- cursor: not-allowed;
- transition: background-color 0.3s ease, transform 0.3s ease;
+#send-btn:disabled {
+  background-color: grey;
+  cursor: not-allowed;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 #modal-close-btn {
@@ -237,7 +237,7 @@ a:hover{
   cursor: pointer;
 }
 
-#send-btn:disabled:hover{
+#send-btn:disabled:hover {
   background-color: grey;
   cursor: not-allowed;
 }
@@ -383,14 +383,14 @@ a:hover{
 pre {
   background-color: #282c34;
   color: #abb2bf;
-  
+
   margin: 15px;
   padding: 10px;
   border-radius: 5px;
-  
+
   outline: none;
   border: none;
-  
+
   overflow-x: auto;
 }
 
@@ -417,6 +417,10 @@ code {
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 0;
+  }
+
+  #home-btn {
+    transform: scale(0.7);
   }
 
   #title {
@@ -466,8 +470,62 @@ code {
   .loading-message {
     max-width: 70vw;
     min-width: 20vw;
+    transform: scale(0.8);
   }
 }
+
+/* Support for shorter viewports (ex. Laptop display) */
+@media (max-height: 768px) and (min-width: 1024px) {
+  .container {
+    padding-left: 10px;
+    padding-right: 10px;
+    max-height: 100vh;
+  }
+
+  #title {
+    font-size: 25pt;
+  }
+
+  .id-container {
+    font-size: 10pt;
+  }
+
+  .chat-container {
+    width: 90vw;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .chat-interact-container {
+    width: 90vw;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #send-btn {
+    width: 100px;
+    max-width: 7vw;
+    margin-left: 20px;
+    scale: 0.9;
+  }
+
+  .profile-image {
+    width: 35px;
+    height: 35px;
+  }
+
+  .user-message,
+  .assistant-message {
+    max-width: 70vw;
+    font-size: 12pt;
+  }
+
+  .loading-message {
+    transform: scale(0.8);
+    margin-left: 0;
+  }
+}
+
 
 /* Dark Theme */
 #theme-toggle {
@@ -477,7 +535,7 @@ code {
 
   min-width: 20px;
   min-height: 20px;
-  
+
   border: none;
 
   position: fixed;
